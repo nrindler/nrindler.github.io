@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Do Indonesian forest fires affect Singapore&#39;s Air Quality?</title>
+<meta name="description" content="nadav&#39;s data science portfolio">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/owl.carousel.css">
+<link rel="stylesheet" href="/css/owl.theme.css">
+
+
+  <link href="/css/style.blue.css" rel="stylesheet" id="theme-stylesheet">
+
+ 
+
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+
+<link href="/css/custom.css" rel="stylesheet">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+</head>
+<body>
+  <div id="all">
+      <div class="container-fluid">
+          <div class="row row-offcanvas row-offcanvas-left">
+              <div id="sidebar" class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas">
+  <div class="sidebar-content">
+    <h1 class="sidebar-heading"><a href="/">nadav &#43; analytics</a></h1>
+    
+      <p class="sidebar-p">Data scientist, 'R-vangelist', traveler, bicycling enthusiast, DC native.</p>
+    
+      <p class="sidebar-p">Marketing analytics @AmericanRedCross, views are my own.</p>
+    
+    <ul class="sidebar-menu">
+      
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About</a></li>
+      
+        <li><a href="/contact/">Get in touch</a></li>
+      
+    </ul>
+    <p class="social">
+  
+  
+  
+  
+  
+  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
+    <i class="fa fa-linkedin"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/nrindler" data-animate-hover="pulse">
+    <i class="fa fa-github"></i>
+  </a>
+  
+</p>
+
+
+    <div class="copyright">
+      <p class="credit">
+        
+          &copy;2018 Nadav Rindler
+        
+        | Template by <a href="https://bootstrapious.com/free-templates" class="external">Bootstrapious.com</a>
+
+&amp; ported to Hugo by <a href="https://github.com/kishaningithub">Kishan B</a>
+
+      </p>
+    </div>
+  </div>
+</div>
+
+              
+<div class="col-xs-12 col-sm-8 col-md-9 content-column white-background">
+  <div class="small-navbar visible-xs">
+  <button type="button" data-toggle="offcanvas" class="btn btn-ghost pull-left"> <i class="fa fa-align-left"> </i>Menu</button>
+  <h1 class="small-navbar-heading"><a href="/">nadav &#43; analytics</a></h1>
+</div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="content-column-content">
+         <h1>Do Indonesian forest fires affect Singapore&#39;s Air Quality?</h1>
+         <p>This is my course project for the University of Washington’s <a href="http://www.pce.uw.edu/certificates/data-science.html"><strong>Certificate in Data Science</strong></a>. Submitted June, 2017, at the completion of DS350: <em>Methods for Data Analysis</em>.</p>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>Fires in Indonesia account for a significant source of global carbon emissions. 2015 witnessed a large spike in fires in Indonesia. NAA satellite data identified more than 100,000 fires in the first 10 months of 2015, of which nearly 24,000 occurred within a 10-day window during the peak burn (late September, 2015, see Fig. 1). This event led researchers to decry that Indonesian fires <a href="http://www.wri.org/blog/2015/10/indonesia%E2%80%99s-fire-outbreaks-producing-more-daily-emissions-entire-us-economy">produced more daily carbon emissions than the entire US economy</a>.</p>
+<p><strong>Fig. 1</strong> <img src="/img/DS350/indo_fires.png" /></p>
+<p><em>23,814 active fires were identified during the 2015 peak burn season. Color denotes fire brightness, a measure of intensity</em></p>
+<p>The fires are the result of burning tropical rainforest for conversion to agricultural purposes, primarily oil palm and timber/pulpwood plantations. More than half of observed fires in 2015 occurred on peatland, a major source of stored carbon in the earth.</p>
+<p>Beyond the ramifications for global climate change, such widespread fires generate smoke that is a source of local air pollution (see Fig. 2). I chose to investigate the extent to which the Indonesian fires affect Singapore’s air quality. I chose Singapore because of its proximity to Indonesia (Singapore and Jakarta are 1,000km apart), as well as because of the rich data availability.</p>
+<p><strong>Fig. 2</strong> <img src="/img/DS350/fires_oct14firessat.png" width="768" /></p>
+<p><em>Satelline imagery of smoke from Indonesian fires on Oct. 14, 2015. <a href="http://www.wri.org/blog/2015/10/indonesia%E2%80%99s-fire-outbreaks-producing-more-daily-emissions-entire-us-economy">Source</a>.</em></p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>The period of analysis is 2014-2016. Singapore air quality data was scraped from Singapore’s National Environment Agency website. Data is hourly and was averaged at the daily level (see Fig. 3). (<a href="http://www.haze.gov.sg/haze-updates/historical-psi-readings">Source</a>). Singapore’s average daily PSI is 52, within the “Moderate” range as defined by the Singapore government. However, there were 41 days in 2014-2016 where PSI exceeded 100, an “Unhealthy” level.</p>
+<p>I downloaded daily weather data from the Meteorological Service Singapore for the Changi airport weather station. (<a href="http://www.weather.gov.sg/climate-historical-daily">Source</a>). Monthly average sunshine hours and relative humidity were obtained from the Singapore government’s open data portal. (<a href="https://data.gov.sg/dataset/relative-humidity-monthly-mean">Source</a> and <a href="https://data.gov.sg/dataset/sunshine-duration-monthly-mean-daily-duration">Source</a>). Finally, I manually downloaded historical Indonesia fire data from Global Forest Watch, which is based on NASA active fire satellite data. (<a href="http://data.globalforestwatch.org/datasets/de1fe5832831464cbd64aaa8f2d54781_0">Source</a>). I summarized the Indonesia fire data at the daily level and subset to the period 2014-2016.</p>
+<p><strong>Fig. 3</strong> <img src="/img/DS350/sg_daily_psi.png" width="900" /></p>
+<p><em>Singapore PSI, or Pollution Standards Index, measures the level of air particulates. PSI spiked during Sept-Nov 2015</em></p>
+<p>At first glance, there is a close relationship between the number of active Indonesian fires and Singapore’s PSI. Fires even appear to be a leading indicator (See Fig. 4).</p>
+<p><strong>Fig. 4</strong> <img src="/img/DS350/compare_weekly_psi_num_fire.png" width="900" /></p>
+<p><em>The weekly Indonesian fire count overlays Singapore’s PSI closely, particularly during peak burn season (Sept-Nov)</em></p>
+<p>At the daily level, the fire count and PSI have a correlation coefficient of 0.554. Visual inspection shows that there is not as close a relationship between PSI and monthly sunshine and humidity levels (See Fig. 5).</p>
+<p><strong>Fig. 5</strong> <img src="/img/DS350/month_psi_sun_humidity.png" width="900" /></p>
+</div>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<p>My objective was to predict daily average 2015 Singapore PSI levels using a model trained on 2014 data. As mentioned, predictors included weather data (rainfall, temperature, wind speed, sunshine, and relative humidity), as well as Indonesian fire attributes (fire count, count of fires identified with ‘high confidence’, maximum and mean fire brightness). Absent from the predictors is wind direction for lack of data availability. Fig. 6 shows that wind direction likely an important predictor of Singapore PSI; wind blows from the south during the same months as Indonesia experiences its peak burn season (Sept-Nov).</p>
+<p><strong>Fig. 6</strong> <img src="/img/DS350/CCS-Figure9.png" /></p>
+<p><em>Singapore’s wind comes from the south (the direction of Indonesia) during daylight hours between May-Oct. (<a href="http://www.weather.gov.sg/climate-climate-of-singapore/">Source</a>).</em></p>
+<p>Additionally, I utilized moving averages, simple exponential smoothing, and Fourier transformation to investigate and visualize trend and seasonality in the PSI data. Ultimately I did not include moving averages or SES in the prediction because I was more interested in model interpretation - which factors affect Singapore’s PSI? - more so than predictive accuracy. Knowing that daily PSI is highly correlated with the previous day/week/month’s PSI levels is not a very interesting finding. As for seasonality, I found that seasonally-adjusting the PSI data based on a Fourier transformation masked the Indonesian fire count and resulted in poor predictions (it underestimates fires during Sept-Nov peak fire season).</p>
+<p><strong>Fig. 7</strong> <img src="/img/DS350/psi_seasonal_adj.png" width="900" /></p>
+<p><em>Seasonally-adjusted PSI is artificially-low during Sept-Nov and masks the fire count predictors in a linear regression.</em></p>
+</div>
+<div id="results-and-interpretation" class="section level2">
+<h2>Results and Interpretation</h2>
+<p>Stepwise linear regression found the daily fire count to be a key predictor of Singapore PSI, as well as the prior-day’s fire count (See Fig. 8). Week of year also has a large positive coefficient, meaning that as the week of the year increases so does Singapore PSI - this captures some of the seasonality given the higher PSI levels in Sept-Nov. Other predictors include rain, temperature, wind speed and hours of sunshine. Wind speed and hours of sunshine have negative coefficients - stronger wind and more hours of sunlight are correlated with lower PSI.</p>
+<p><strong>Fig. 8</strong> <img src="/img/DS350/stepwise_linreg_output.png" /></p>
+<p>.</p>
+<p>The model captures large movements in Singapore PSI but remains less predictive than I would like (see Fig. 9). Adjusted r-squared is 0.5484, and mean test error is 13.176, or 22.6% of the daily average PSI score. If given more time I explore adding new predictors (e.g., wind direction, measures of local pollution/emissions such as number of vehicle miles travelled). The prediction was more accurate for 2016 than for 2015, which may reflect how unusually-large the 2015 fires were. Finally, while the regression did underestimate PSI during Sept-Nov 2015 (as expected), it also underestimated PSI during Jan-Feb 2015 and 2016, which is typically during Singapore’s monsoon (rainy) season.</p>
+<p><strong>Fig. 9</strong> <img src="/img/DS350/plot_linreg_pred.png" width="800" /></p>
+<p><em>Actual PSI (black) and predicted PSI (red dashed line). 2014 is in-sample (training) data, while 2015-2016 is out-of-sample prediction.</em></p>
+<p>Finally, I would seek to better control for trend and seasonality in the PSI data. I felt that three years was not very long to observe trend and so did not control for it. With seasonality, seasonally-adjusting PSI so far yielded a worse prediction. However, absolute test data residuals are relatively large (22.6% of mean daily PSI), and biased positively (See Fig. 10).</p>
+<p><strong>Fig. 10</strong> <img src="/img/DS350/plot_linreg_test_resid.png" width="800" /></p>
+</div>
+<div id="takeaways" class="section level2">
+<h2>Takeaways</h2>
+<ul>
+<li>Indonesian fires and daily weather are statistically-significant predictors of PSI</li>
+<li>Regression understates PSI during peak burn season (Sept-Nov)</li>
+<li>Want to explore methods to control for trend and seasonality to generate more accurate predictions</li>
+</ul>
+<hr />
+</div>
+
+         
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+      </div>
+  </div>
+  <script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.js"> </script>
+<script src="/js/ekko-lightbox.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/front.js"></script>
+
+</body>
+</html>

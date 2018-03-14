@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>DS250 - UW Intro to Data Science Course Project</title>
+<meta name="description" content="nadav&#39;s data science portfolio">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/owl.carousel.css">
+<link rel="stylesheet" href="/css/owl.theme.css">
+
+
+  <link href="/css/style.blue.css" rel="stylesheet" id="theme-stylesheet">
+
+ 
+
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+
+<link href="/css/custom.css" rel="stylesheet">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+</head>
+<body>
+  <div id="all">
+      <div class="container-fluid">
+          <div class="row row-offcanvas row-offcanvas-left">
+              <div id="sidebar" class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas">
+  <div class="sidebar-content">
+    <h1 class="sidebar-heading"><a href="/">nadav &#43; analytics</a></h1>
+    
+      <p class="sidebar-p">Data scientist, 'R-vangelist', traveler, bicycling enthusiast, DC native.</p>
+    
+      <p class="sidebar-p">Marketing analytics @AmericanRedCross, views are my own.</p>
+    
+    <ul class="sidebar-menu">
+      
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About</a></li>
+      
+        <li><a href="/contact/">Get in touch</a></li>
+      
+    </ul>
+    <p class="social">
+  
+  
+  
+  
+  
+  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
+    <i class="fa fa-linkedin"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/nrindler" data-animate-hover="pulse">
+    <i class="fa fa-github"></i>
+  </a>
+  
+</p>
+
+
+    <div class="copyright">
+      <p class="credit">
+        
+          &copy;2018 Nadav Rindler
+        
+        | Template by <a href="https://bootstrapious.com/free-templates" class="external">Bootstrapious.com</a>
+
+&amp; ported to Hugo by <a href="https://github.com/kishaningithub">Kishan B</a>
+
+      </p>
+    </div>
+  </div>
+</div>
+
+              
+<div class="col-xs-12 col-sm-8 col-md-9 content-column white-background">
+  <div class="small-navbar visible-xs">
+  <button type="button" data-toggle="offcanvas" class="btn btn-ghost pull-left"> <i class="fa fa-align-left"> </i>Menu</button>
+  <h1 class="small-navbar-heading"><a href="/">nadav &#43; analytics</a></h1>
+</div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="content-column-content">
+         <h1>DS250 - UW Intro to Data Science Course Project</h1>
+         <div id="background" class="section level3">
+<h3>Background</h3>
+<p>This was my course project in Introduction to Data Science, the first course in a <a href="http://www.pce.uw.edu/certificates/data-science.html">three-course certificate program</a> through the University of Washington.</p>
+<p>I’m publishing it here, warts and all, because I think there are a few interesting facets to the analysis.</p>
+<ul>
+<li>Flexing my metaphorical mapping and visualization bicep with GGPLOT and GGMAP</li>
+<li>A first foray / experiment into using Principal Component Analysis (PCA)</li>
+<li>Leveraging multiple models - a decision tree for feature selection, PCA to address multicollinearity, and a linear regression to predict graduation rate</li>
+<li>A stark lesson in how hard it is to make sexy infographics!</li>
+<li>Surprising results - I was surprised that measures of family income are so highly correlated with both average SAT score and colleges’ graduation rates. What are the implications for education policy?</li>
+</ul>
+</div>
+<div id="college-scorecard-analytics-project" class="section level3">
+<h3>College Scorecard Analytics Project</h3>
+<p>A study of colleges in the US has collected information regarding school and student demographics, degrees awarded by subject area as well as financial information including average degree cost by income bracket, student tuition and scholarships, repayment rates, and post-college average earnings.</p>
+<hr />
+<div id="exploratory-data-analysis" class="section level4">
+<h4>Exploratory data analysis</h4>
+<p><strong>0</strong> Where are the colleges located?</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-2-1.png" width="100%" /></p>
+<p>US colleges appear to be distributed similarly to the overall US population.</p>
+<p>Among college types, however, it appears that Public colleges are the most likely to be located in rural areas, while Private for-profit colleges are primarily centered around urban areas.</p>
+<p>This is particularly noticeable given that there are nearly twice as many private for-profit colleges as public colleges:</p>
+<pre><code>## # A tibble: 3 x 3
+##   CONTROL `n()`               type
+##     &lt;int&gt; &lt;int&gt;              &lt;chr&gt;
+## 1       1  2044             Public
+## 2       2  1956 Private non-profit
+## 3       3  3703 Private for-profit</code></pre>
+<p><strong>2.1</strong>. Count of colleges by degree length and region</p>
+<p>College ownership appears related to the degree-type awarded:</p>
+<ul>
+<li>The bulk of Private for-profit colleges are certificate-granting</li>
+<li>Public community colleges (Associates degree-granting) outnumber Public four-year institutions</li>
+<li>Private non-profit colleges specialize in undergraduate and graduate degrees</li>
+</ul>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-4-1.png" width="100%" /></p>
+<p>I’m not sure what conclusions we can draw about regional distribution of colleges, beyond the fact that the Southeast appears overrepresented. Deeper analysis should adjust college counts by total population to compare the number of colleges <em>per capita.</em></p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-5-1.png" width="100%" /></p>
+<p><strong>2.2</strong>. Categorize student graduation counts by degree name</p>
+<p>Health, business/marketing, cuinary, and humanities are all top majors:</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-7-1.png" width="100%" /></p>
+<p>Top 5 majors by college type:</p>
+<pre class="r"><code>#public
+t.major2[t.major2$Type==&quot;Public&quot;,][1:5,]</code></pre>
+<pre><code>##       Type             variable      value
+## 106 Public               health 0.22663601
+## 46  Public           humanities 0.17144393
+## 109 Public   business_marketing 0.11892869
+## 82  Public     security_law_enf 0.04044814
+## 94  Public mechanic_repair_tech 0.03918093</code></pre>
+<pre class="r"><code>#private non-prof
+t.major2[t.major2$Type==&quot;Private Non-Profit&quot;,][1:5,]</code></pre>
+<pre><code>##                   Type           variable      value
+## 107 Private Non-Profit             health 0.18948482
+## 110 Private Non-Profit business_marketing 0.15411169
+## 71  Private Non-Profit     theology_relig 0.07446778
+## 104 Private Non-Profit  visual_performing 0.06753585
+## 26  Private Non-Profit          education 0.05250905</code></pre>
+<pre class="r"><code>#private for-prof
+t.major2[t.major2$Type==&quot;Private For-profit&quot;,][1:5,]</code></pre>
+<pre><code>##                   Type             variable      value
+## 108 Private For-profit               health 0.37294668
+## 24  Private For-profit             culinary 0.28278959
+## 111 Private For-profit   business_marketing 0.07457577
+## 21  Private For-profit             computer 0.05469259
+## 96  Private For-profit mechanic_repair_tech 0.03740514</code></pre>
+<p>Private for-profit schools are the main providers of culinary programs, while private non-profit colleges specialize in theology/religious studies (likely religiously-affiliated colleges) and the visual and performing arts.</p>
+<hr />
+</div>
+<div id="study-evaluation" class="section level4">
+<h4>Study Evaluation</h4>
+<p><strong>3.1</strong>. Study type, experimental model, and approach</p>
+<p>The College Scorecard (<a href="https://collegescorecard.ed.gov/data/" class="uri">https://collegescorecard.ed.gov/data/</a>) is a collection of data on US colleges regarding school and student demographics, degrees awarded by subject area, as well as financial information including average degree cost by income bracket, student tuition and scholarships, repayment rates, and post-college earnings.</p>
+<p>Data are self-reported and observational (there are no tests or treatments being applied).</p>
+<p>Experimental design:</p>
+<ul>
+<li>Predict each college’s graduation rate (completion of a 4-year degree within 6 years)</li>
+<li>Response variable, graduation rate, is a numeric attribute with a range of [0,1]</li>
+<li>My approach is to use data from the 2013/14 academic year (year t-1) to predict graduation rates in the subsequent year, the 2014-15 academic year (year t)</li>
+<li>Features will be generated from the College Scorecard data set and include numeric and categorical attributes</li>
+</ul>
+<p><strong>3.2</strong>. Bias</p>
+<ul>
+<li>Data exclude part-time students</li>
+<li>Data are self-reported. There is potential response bias because only schools that are good performers are incentivized to provide information</li>
+<li>Evaluation of graduation rates is focused on completing a 4-year degree, when most students don’t do a Bachelor’s, they do trade school or associate’s degree. In general, performance criteria might be more geared towards 4-year degree holders than community colleges.</li>
+</ul>
+<p><strong>3.3</strong>. Hypothesis</p>
+<ol style="list-style-type: decimal">
+<li><p>School selectivity - as measured by admissions rate and average SAT score - is positively correlated with graduation rate.</p></li>
+<li><p>School ownership (Public/Private non-profit/Private for-profit) is correlated with graduation rate. Specifically, private non-profits have the highest graduation rate, followed by public colleges followed by private for-profit colleges.</p></li>
+<li><p>Graduation rates are highest for graduate students, followed by Bachelor’s, Associate’s, and certificates.</p></li>
+</ol>
+<hr />
+</div>
+<div id="summary-analysis---value-add-analysis-for-education" class="section level4">
+<h4>Summary analysis - Value-add analysis for education</h4>
+<p><strong>4.0</strong>. Cost by College Type</p>
+<p>Private non-profit colleges are more than twice as expensive as Public colleges and nearly 40% more expensive than Private for-profit colleges.</p>
+<pre><code>## # A tibble: 3 x 2
+##                 type avg_cost
+##                &lt;chr&gt;    &lt;dbl&gt;
+## 1             Public 14922.46
+## 2 Private Non-profit 35607.98
+## 3 Private For-profit 25902.30</code></pre>
+<p><strong>4.1</strong>. Cost by Degree</p>
+<p>Most of the cost differential between Private non-profit and for-profit colleges is due to the face that Bachelor’s and graduate degrees at Private non-profit schools are significantly more expensive than at Private for-profits.</p>
+<p>Surprisingly, there is not a large cost increase at Private for-profits as you go from certificate degrees to Associate’s and Bachelor’s.</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-12-1.png" width="100%" /></p>
+<p><strong>4.1a</strong>. Cost by Major</p>
+<p>The most expensive majors cost 2-3x the least expensive. The most expensive majors are those most-commonly awarded at Private colleges (Philosophy, Religion, Ethnic/Cutlural/Gender studies, Architecture), while the least-expensive majors are associated with skilled trades (Mechanic/Repair/Technician, Construction, and Precision Production).</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-13-1.png" width="100%" /></p>
+<p><strong>4.2</strong>. Cost by College</p>
+<p>The most expensive colleges are all Private non-profit schools, mostly located in major metropolitan areas. Community colleges are the most affordable, whereas if you want to attend a low-cost Private college, head to the Caribbean!</p>
+<p>Top 5 most expensive colleges</p>
+<pre><code>##                                        INSTNM COSTT4_A
+## 1                       University of Chicago    64988
+## 2 Columbia University in the City of New York    64144
+## 3                      Sarah Lawrence College    64056
+## 4           Washington University in St Louis    63755
+## 5                          Occidental College    63363</code></pre>
+<p>Top 5 least expensive colleges</p>
+<pre><code>##                              INSTNM COSTT4_A
+## 1       Cleveland Community College     5536
+## 2 Colegio Universitario de San Juan     5920
+## 3     Pearl River Community College     6171
+## 4         Harford Community College     6336
+## 5               South Texas College     6374</code></pre>
+<p>Top 5 least expensive Private non-profit schools</p>
+<pre><code>##                                                   INSTNM COSTT4_A
+## 1                           Caribbean University-Bayamon     8180
+## 2                             Caribbean University-Ponce     8438
+## 3 Pontifical Catholic University of Puerto Rico-Mayaguez     8716
+## 4                            Atlantic University College     9521
+## 5                              Dewey University-Hato Rey    10021</code></pre>
+<p><strong>4.3</strong>. College completion rates by state, compared to national average</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-18-1.png" width="100%" /></p>
+<hr />
+</div>
+<div id="predictive-model" class="section level4">
+<h4>Predictive Model</h4>
+<p>Target = predict student graduation rate Train model on year T-1 (2013/2014 data) and evaluate predictions accuracy in year T (2014/2015 data)</p>
+<p><strong>5.1</strong>. Evaluate the primary features that affect college program completion</p>
+<p>I chose to start with a regression tree to give first impressions of the key predictors of colleges’ graduation rates.</p>
+<pre class="r"><code>#Add additional predictors to the &quot;scorecard&quot; dataset used for data exploration
+new.vars &lt;- c(&#39;RELAFFIL&#39;,&#39;ADM_RATE&#39;,&#39;SAT_AVG&#39;,&#39;INEXPFTE&#39;,&#39;AVGFACSAL&#39;,
+              &#39;PFTFAC&#39;,&#39;PCTPELL&#39;,&#39;AGE_ENTRY&#39;,&#39;HCM2&#39;,&#39;MAIN&#39;,&#39;CCBASIC&#39;,
+              &#39;CCUGPROF&#39;,&#39;CCSIZSET&#39;,&#39;PCTFLOAN&#39;,&#39;FEMALE&#39;,&#39;MARRIED&#39;,
+              &#39;DEPENDENT&#39;,&#39;VETERAN&#39;,&#39;FIRST_GEN&#39;,&#39;ICLEVEL&#39;,&#39;FAMINC&#39;)
+
+data14 &lt;- cbind(scorecard,df_14_15[,new.vars])
+
+#delete obs with missing target variable
+data14 &lt;- data14[!is.na(data14$C150_4),]
+                   
+#import training data (2013/14 data)
+df_13_14 &lt;- as.data.frame(fread(&quot;C:/Users/nadav.rindler/OneDrive - American Red Cross/Training/UW Data Science Certificate/DS250/Course Project/CollegeScorecard_Raw_Data/MERGED2013_14_PP.csv&quot;, 
+                                na.strings=c(&quot;NULL&quot;,&quot;PrivacySuppressed&quot;)))
+#fix UNITID name
+colnames(df_13_14)[1] &lt;- c(&quot;UNITID&quot;)
+
+#training data
+data13 &lt;- df_13_14[!is.na(df_13_14$C150_4),which(names(df_13_14) %in% colnames(data14))]
+
+#Regression Tree
+library(rpart)
+library(rpart.plot)
+
+#check null values - some attributes are entirely null
+null_list &lt;- colSums(is.na(data13), na.rm=FALSE)
+nulls &lt;- null_list[null_list&gt;0]
+nulls </code></pre>
+<pre><code>##      HCM2    LOCALE   CCBASIC  CCUGPROF  CCSIZSET  RELAFFIL  ADM_RATE 
+##      2448      2448      2448      2448      2448      2448       651 
+##   SAT_AVG    PCIP01    PCIP03    PCIP04    PCIP05    PCIP09    PCIP10 
+##      1069         1         1         1         1         1         1 
+##    PCIP11    PCIP12    PCIP13    PCIP14    PCIP15    PCIP16    PCIP19 
+##         1         1         1         1         1         1         1 
+##    PCIP22    PCIP23    PCIP24    PCIP25    PCIP26    PCIP27    PCIP29 
+##         1         1         1         1         1         1         1 
+##    PCIP30    PCIP31    PCIP38    PCIP39    PCIP40    PCIP41    PCIP42 
+##         1         1         1         1         1         1         1 
+##    PCIP43    PCIP44    PCIP45    PCIP46    PCIP47    PCIP48    PCIP49 
+##         1         1         1         1         1         1         1 
+##    PCIP50    PCIP51    PCIP52    PCIP54  COSTT4_A AVGFACSAL    PFTFAC 
+##         1         1         1         1        60        18       183 
+##   PCTPELL  PCTFLOAN AGE_ENTRY    FEMALE   MARRIED DEPENDENT   VETERAN 
+##         2         2        12       118       379       144      1319 
+## FIRST_GEN    FAMINC 
+##       170        12</code></pre>
+<pre class="r"><code>#convert some numeric values to factor
+data13$CONTROL &lt;- as.factor(data13$CONTROL)
+data13$REGION &lt;- as.factor(data13$REGION)
+data13$ICLEVEL &lt;- as.factor(data13$ICLEVEL)
+
+data14$CONTROL &lt;- as.factor(data14$CONTROL)
+data14$REGION &lt;- as.factor(data14$REGION)
+data14$ICLEVEL &lt;- as.factor(data14$ICLEVEL)
+
+#data transformations
+data13$INEXPFTE_exp &lt;- exp(data13$INEXPFTE)
+data14$INEXPFTE_exp &lt;- exp(data14$INEXPFTE)
+
+#religious affiliation doesn&#39;t exist in 2013 data. Join from 2014 data
+  #create an indicator variable to identify ANY religiously-affiliated college
+data13 &lt;- data13 %&gt;%
+  select(-RELAFFIL) %&gt;% 
+  left_join(data14[,c(&quot;UNITID&quot;,&quot;RELAFFIL&quot;)], by=&quot;UNITID&quot;) %&gt;% 
+  mutate(RELAFFIL_IND=ifelse(RELAFFIL&gt;=0,1,0))
+data14$RELAFFIL_IND &lt;- ifelse(data14$RELAFFIL&gt;=0,1,0)
+
+#remove from predictors - target var, ID vars, null vars
+exclude &lt;- c(&quot;C150_4&quot;,&quot;UNITID&quot;,&quot;INSTNM&quot;,&quot;HCM2&quot;,&quot;LOCALE&quot;,&quot;CCBASIC&quot;,&quot;CCUGPROF&quot;,
+             &quot;CCSIZSET&quot;,&quot;RELAFFIL&quot;,&quot;LNFAMINC&quot;,&quot;STABBR&quot;,&quot;COSTT4_A&quot;)
+varnames &lt;- names(data13)[-which(names(data13) %in% exclude)]
+fmla &lt;- as.formula(paste(&quot;C150_4 ~ &quot;, paste(varnames, collapse= &quot;+&quot;)))
+
+#Train tree
+grad.tree &lt;-  rpart(fmla,data = data13, method=&quot;anova&quot;,
+                      control=rpart.control(cp=0.001)) #increase model complexity over default (cp=0.01)
+
+#prune tree to node with min xerror
+p.grad.tree &lt;- prune(grad.tree, cp=grad.tree$cptable[which.min(grad.tree$cptable[,&quot;xerror&quot;]),&quot;CP&quot;])
+
+#plot tree
+prp(p.grad.tree,faclen=2,varlen=20,cex=0.5)</code></pre>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>I’m surprised that the most important predictors of a college’s graduation rate relate to its students’ family incomes. Family income (FAMINC), percentage of the student body on Pell Grants (PCTPELL), average age at college entry (AGE_ENTRY), percentage of first generation students (FIRST_GEN), percentage of dependent students (DEPENDENT), and percentage of students on federal loans (PCTFLOAN) are all measures of the demographics and socioeconomic background of the student body.*</p>
+<p>There are also several important predictors related to average SAT score and educational resources (instructional expenditure per student, INEXPFTE, and average faculty salary, AVGFACSAL)</p>
+<p>*Note: Demographic data such as family income, etc. come from the National Student Loan Data System (NSLDS) which is pulling the data from students’ FAFSA forms.</p>
+<pre class="r"><code>#variable importance
+importance &lt;- as.data.frame(sort(p.grad.tree$variable.importance,decreasing=TRUE))
+colnames(importance) &lt;- &quot;importance&quot;
+head(importance, n=10)</code></pre>
+<pre><code>##           importance
+## FAMINC     50.096603
+## PCTPELL    32.493998
+## AGE_ENTRY  19.999522
+## FIRST_GEN  18.883223
+## INEXPFTE   15.762103
+## DEPENDENT  15.186512
+## PCTFLOAN    6.169695
+## SAT_AVG     4.992112
+## AVGFACSAL   4.888402
+## PCIP42      4.148303</code></pre>
+<p>Let’s visualize some of these relationships: <img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-21-1.png" width="100%" /><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-21-2.png" width="100%" /></p>
+<p>As it turns out, there is a high degree of correlation between predictors related to (1) student body’s socioeconomic background; (2) average SAT score; and (3) college’s educational expenditure:</p>
+<p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><strong>5.2</strong>. Predict student graduation rates by college</p>
+<p>Given the high degree of collinearity between key predictors, I opted to use Principal Component Analysis (PCA) to reduce the set of predictors to a smaller set of linearly-uncorrelated variables, while still maximizing variance of each principal component.</p>
+<p>I used the initial regression tree to do variable selection, plugging in the predictors identified by the tree as inputs to the PCA.</p>
+<p>This approach has several limitations: - PCA can’t handle null values. Using PCA I was only able to predict graduation rates for ~50% of colleges. Deeper analysis should account for null values using imputation or selecting predictors that have good data coverage. - PCA can only handle numeric inputs, so categorical attributes must be converted to numeric. This works well for categorical variables which are ordinal, but not so well for those which are nominal (no inherent order between levels).</p>
+<pre class="r"><code>library(psych)       #PCA package
+library(FactoMineR)  #additional PCA analysis
+
+#prepare pca dataset
+pca.df &lt;- data13[,cor.vars]
+pca.df$C150_4 &lt;- NULL
+pca.df &lt;- as.data.frame(lapply(pca.df , as.numeric))
+
+#train pca
+pca.rotate = principal(pca.df, nfactors=3, rotate = &quot;varimax&quot;)
+
+#apply pca scores
+pca.scores = as.data.frame(pca.rotate$scores)
+pca.df &lt;- cbind(pca.df, pca.scores, C150_4=data13$C150_4)
+  
+#linear regression using principal components
+pca.lm = lm(C150_4~RC1+RC2+RC3, data=pca.df)
+summary(pca.lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = C150_4 ~ RC1 + RC2 + RC3, data = pca.df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.44221 -0.05546  0.00234  0.05771  0.51543 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.472161   0.003412 138.392   &lt;2e-16 ***
+## RC1          0.153575   0.002917  52.644   &lt;2e-16 ***
+## RC2          0.005700   0.003595   1.585    0.113    
+## RC3         -0.079445   0.004135 -19.211   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.0945 on 1298 degrees of freedom
+##   (1146 observations deleted due to missingness)
+## Multiple R-squared:  0.6845, Adjusted R-squared:  0.6837 
+## F-statistic: 938.6 on 3 and 1298 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Note the 1146 obs deleted due to missing values</code></pre>
+<p><strong>5.2a</strong>. Evaluate model results</p>
+<p>Ultimately the PCA linear regression approach outperformed the simple regression tree trained previously.</p>
+<p>However, this could be due to the fact that the PCA linear model is trained only on the subset of schools which report average SAT scores (roughly half the dataset), and when AVG_SAT is excluded from the PCA model, model MSE jumps and is closer to the regression tree error rate.</p>
+<p>PCA linear model mean squared error (MSE) on test data:</p>
+<pre><code>## [1] 0.008997365</code></pre>
+<p>Regression tree mean squared error (MSE) on test data:</p>
+<pre><code>## [1] 0.02223529</code></pre>
+<p>Baseline for comparison - average graduation rate among colleges in test data:</p>
+<pre><code>## [1] 0.4779574</code></pre>
+<p>Examine residuals - which schools are the top over/underperformers for graduation rate compared to my prediction?</p>
+<p>Overperforming colleges are likely to be religiously affiliated private non-profit schools. Several are health/nursing focused, and many have a high percentage of female students.</p>
+<pre><code>##                                                    INSTNM C150_4 CONTROL
+## 2855    The Christ College of Nursing and Health Sciences 0.7857       2
+## 1733                      College of Our Lady of the Elms 0.7811       2
+## 2888 Good Samaritan College of Nursing and Health Science 0.7143       2
+## 2151                     Bryan College of Health Sciences 0.8000       2
+## 3126                       Northwest Christian University 0.6625       2
+## 1170                               Bethel College-Indiana 0.6983       2
+## 423                         Mount Saint Mary&#39;s University 0.6550       2
+## 331                             Fresno Pacific University 0.6327       2
+## 1637                                  Bay Path University 0.6319       2
+## 3197                                  Cedar Crest College 0.6907       2
+##      RELAFFIL_IND    FEMALE     resid
+## 2855            0 0.9047619 0.3698549
+## 1733            1 0.7703180 0.3628841
+## 2888            1 0.9379845 0.3118155
+## 2151            0 0.8977273 0.2997813
+## 3126            1 0.6088154 0.2686893
+## 1170            1 0.6677890 0.2612087
+## 423             1 0.9270705 0.2543667
+## 331             1 0.7465668 0.2465729
+## 1637            0        NA 0.2443710
+## 3197            0 0.9345088 0.2434338</code></pre>
+<p>Underperforming colleges are a mix of public and private non-profit schools. There seems to be some geographic concentration in the southeast/</p>
+<pre><code>##                                                INSTNM C150_4 CONTROL
+## 3759                               Paul Quinn College 0.0380       2
+## 4094 West Virginia University Institute of Technology 0.1921       1
+## 6948       Pennsylvania State University-World Campus 0.2500       1
+## 945                          Truett-McConnell College 0.2216       2
+## 9                     Auburn University at Montgomery 0.2194       1
+## 1193  Indiana University-Purdue University-Fort Wayne 0.2640       1
+## 888                        College of Coastal Georgia 0.1547       1
+## 862              Abraham Baldwin Agricultural College 0.1618       1
+## 7082                               Augusta University 0.3030       1
+## 1232           Purdue University-North Central Campus 0.2415       1
+##      STABBR      resid
+## 3759     TX -0.3158816
+## 4094     WV -0.3118111
+## 6948     PA -0.2401925
+## 945      GA -0.2399651
+## 9        AL -0.2367177
+## 1193     IN -0.2326425
+## 888      GA -0.2292820
+## 862      GA -0.2282257
+## 7082     GA -0.2261134
+## 1232     IN -0.2241535</code></pre>
+<p>To address the patterns observed in the residuals, I tried including religious affiliation and region into the PCA linear regression model, but these attributes did not improve model fit. It’s possible that: - Only certain kinds of religious schools are associated with overperformance. Or, there could be an interaction between religious affiliation and healthcare-focused schools. - The geographic relationship may be at the state level rather than at the regional level. Or, it could be that the region definition could be changed to better reflect certain underperforming regions (e.g. “Appalachian Region” vs. Mid-Atlantic and Southeast).</p>
+<hr />
+</div>
+<div id="infographic" class="section level4">
+<h4>Infographic</h4>
+<div class="figure">
+<img src="/img/Infographic.png" />
+
+</div>
+</div>
+<div id="end" class="section level4">
+<h4><strong>End</strong></h4>
+</div>
+</div>
+
+         
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+      </div>
+  </div>
+  <script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.js"> </script>
+<script src="/js/ekko-lightbox.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/front.js"></script>
+
+</body>
+</html>

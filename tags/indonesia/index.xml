@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Indonesia on nadav &#43; analytics</title>
+    <link>/tags/indonesia/</link>
+    <description>Recent content in Indonesia on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 07 Jun 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/indonesia/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Do Indonesian forest fires affect Singapore&#39;s Air Quality?</title>
+      <link>/portfolio/indonesiafires/</link>
+      <pubDate>Wed, 07 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/indonesiafires/</guid>
+      <description>This is my course project for the University of Washington’s Certificate in Data Science. Submitted June, 2017, at the completion of DS350: Methods for Data Analysis.
+BackgroundFires in Indonesia account for a significant source of global carbon emissions. 2015 witnessed a large spike in fires in Indonesia. NAA satellite data identified more than 100,000 fires in the first 10 months of 2015, of which nearly 24,000 occurred within a 10-day window during the peak burn (late September, 2015, see Fig.</description>
+    </item>
+    
+  </channel>
+</rss>

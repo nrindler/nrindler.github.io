@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on nadav &#43; analytics</title>
+    <link>/tags/r/</link>
+    <description>Recent content in R on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Feb 2017 00:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Presenting at Python Saigon</title>
+      <link>/portfolio/pythonsaigon/</link>
+      <pubDate>Sat, 25 Feb 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/pythonsaigon/</guid>
+      <description>I had the opportunity to present on “Communicating Results in R” at the weekly Python Saigon Meetup, on Feb 25, 2017 in Ho Chi Minh City, Vietnam.
+We had a great discussion and shared data visualization tools and techniques.
+Materials are available on my GitHub, including a RPres slide deck with links and resources for learning R and data visualization.
+Presenting at Python Saigon
+</description>
+    </item>
+    
+    <item>
+      <title>Solving a Riddle with a Simulation</title>
+      <link>/portfolio/riddle-simulation/</link>
+      <pubDate>Sun, 26 Mar 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/riddle-simulation/</guid>
+      <description>Will the baby walk away?Nate Silver’s famous FiveThirtyEight blog posts a weekly riddle challenge. This week’s riddle is about a baby learning to walk.
+Classic
+Riddle Express:Your baby is learning to walk. The baby begins by holding onto a couch. Whenever she is next to the couch, there is a 25 percent chance that she will take a step forward and a 75 percent chance that she will stay clutching the couch.</description>
+    </item>
+    
+    <item>
+      <title>Do Indonesian forest fires affect Singapore&#39;s Air Quality?</title>
+      <link>/portfolio/indonesiafires/</link>
+      <pubDate>Wed, 07 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/indonesiafires/</guid>
+      <description>This is my course project for the University of Washington’s Certificate in Data Science. Submitted June, 2017, at the completion of DS350: Methods for Data Analysis.
+BackgroundFires in Indonesia account for a significant source of global carbon emissions. 2015 witnessed a large spike in fires in Indonesia. NAA satellite data identified more than 100,000 fires in the first 10 months of 2015, of which nearly 24,000 occurred within a 10-day window during the peak burn (late September, 2015, see Fig.</description>
+    </item>
+    
+    <item>
+      <title>Build a Custom Website with R Studio and GitHub Pages, Part 1</title>
+      <link>/portfolio/build-website/</link>
+      <pubDate>Mon, 06 Mar 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/build-website/</guid>
+      <description>One of R Studio’s best features is the ability to publish analyses in a reproducible, visually-appealing way using R Markdown. R Markdown weaves together text and R code chunks in an easy-to-use interface, allowing you to publish reports, presentations, and dashboards across formats – PDF, HTML HTML slides, books, websites, and blogs.
+I first began using R Markdown to produce slide decks for work as an alternative to Powerpoint. R Markdown’s advantage is that should my data or code change, the changes are instantly reflected in the output by simply re-“knitting” the R Markdown file.</description>
+    </item>
+    
+  </channel>
+</rss>

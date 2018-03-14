@@ -1,0 +1,728 @@
+---
+title: "DS250 - UW Intro to Data Science Course Project"
+author: "Nadav Rindler"
+date: "2017-03-16T00:00:00-05:00"
+output:  html_document
+showonlyimage: true
+draft: false
+image: "img/UW_PCE.jpg"
+weight: 3
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+rm( list = ls())  # Clear environment
+```
+
+```{r eval=T, echo=F}
+#setwd("C:/Users/nadav.rindler/Documents/Nadavalytics/content/blog")
+
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(sqldf)
+
+#unzip folder
+#unzip(zipfile="CollegeScorecard_Raw_Data.zip")
+  #commented out - this takes several minutes to run
+
+#impoort 2014-2015 data
+df_14_15 <- as.data.frame(fread("C:/Users/nadav.rindler/OneDrive - American Red Cross/Training/UW Data Science Certificate/DS250/Course Project/CollegeScorecard_Raw_Data/MERGED2014_15_PP.csv", 
+                                na.strings=c("NULL","PrivacySuppressed")))
+
+#fix UNITID name
+colnames(df_14_15)[1] <- c("UNITID")
+
+#select subset of columns
+scorecard <- df_14_15[,c("UNITID","INSTNM","PREDDEG","HIGHDEG","STABBR","CONTROL",
+                        "REGION","LOCALE",'PCIP01','PCIP03',
+                        'PCIP04','PCIP05','PCIP09','PCIP10','PCIP11','PCIP12',
+                        'PCIP13','PCIP14','PCIP15','PCIP16','PCIP19','PCIP22',
+                        'PCIP23','PCIP24','PCIP25','PCIP26','PCIP27','PCIP29',
+                        'PCIP30','PCIP31','PCIP38','PCIP39','PCIP40','PCIP41',
+                        'PCIP42','PCIP43','PCIP44','PCIP45','PCIP46','PCIP47',
+                        'PCIP48','PCIP49','PCIP50','PCIP51','PCIP52','PCIP54',
+                        'UGDS','COSTT4_A','C150_4')]
+```
+
+### Background
+
+This was my course project in Introduction to Data Science, the first course in a [three-course certificate program](http://www.pce.uw.edu/certificates/data-science.html) through the University of Washington.
+
+I'm publishing it here, warts and all, because I think there are a few interesting facets to the analysis.
+
+* Flexing my metaphorical mapping and visualization bicep with GGPLOT and GGMAP
+* A first foray / experiment into using Principal Component Analysis (PCA)
+* Leveraging multiple models - a decision tree for feature selection, PCA to address multicollinearity, and a linear regression to predict graduation rate
+* A stark lesson in how hard it is to make sexy infographics!
+* Surprising results - I was surprised that measures of family income are so highly correlated with both average SAT score and colleges' graduation rates. What are the implications for education policy?
+
+### College Scorecard Analytics Project
+
+A study of colleges in the US has collected information regarding school and student demographics, degrees awarded by subject area as well as financial information including average degree cost by income bracket, student tuition and scholarships, repayment rates, and post-college average earnings.
+
+***
+#### Exploratory data analysis
+
+**0**\ Where are the colleges located?
+
+```{r eval=T, echo=F, out.width='100%'}
+#map - where are schools located?
+require(maps) 
+require(ggmap) 
+
+# to.map <- sqldf(paste("select INSTNM, STABBR, CONTROL, LATITUDE, LONGITUDE ",
+#                       "from df_14_15 ",
+#                       "where UGDS>=1000 and LATITUDE is not null and ",
+#                       "LONGITUDE is not null and REGION != 9 and ",
+#                       "STABBR not in ('AK','HI')",sep=""))
+to.map = df_14_15 %>% 
+  filter(UGDS>=1000 & !is.na(LATITUDE) & !is.na(LONGITUDE) & REGION != 9 & 
+           STABBR != 'AK' & STABBR != 'HI') %>% 
+  select(INSTNM, STABBR, CONTROL, LATITUDE, LONGITUDE) 
+to.map$CONTROL <- as.factor(to.map$CONTROL)
+levels(to.map$CONTROL) <- c("Public","Private non-profit", "Private for-profit")
+colnames(to.map)[3] <- "Type"
+
+#map
+qplot(LONGITUDE, LATITUDE, colour=Type, data = to.map) + 
+  theme_bw() +
+  borders("state", size = 0.5) +
+  labs(title="US College Map",subtitle="US DOE College Scorecard Data 2014-2015") +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.position="bottom")
+
+```
+
+US colleges appear to be distributed similarly to the overall US population.
+
+Among college types, however, it appears that Public colleges are the most likely to be located in rural areas, while Private for-profit colleges are primarily centered around urban areas.
+
+This is particularly noticeable given that there are nearly twice as many private for-profit colleges as public colleges:
+
+```{r eval=T, echo=F}
+scorecard %>% group_by(CONTROL) %>% summarize(n()) %>% 
+  mutate(type=ifelse(CONTROL==1,'Public',
+                ifelse(CONTROL==2,'Private non-profit','Private for-profit')))
+```
+
+**2.1**\. Count of colleges by degree length and region
+
+College ownership appears related to the degree-type awarded:
+
+* The bulk of Private for-profit colleges are certificate-granting
+* Public community colleges (Associates degree-granting) outnumber Public four-year institutions
+* Private non-profit colleges specialize in undergraduate and graduate degrees
+
+```{r eval=T, echo=F, out.width='100%'}
+#Degree Type
+n.length <- scorecard %>%  
+  group_by(HIGHDEG, CONTROL) %>% 
+  summarize(count=n()) %>% 
+  mutate(school=ifelse(CONTROL==1,"Public",
+                       ifelse(CONTROL==2,"Private Non-profit","Private For-profit")))
+n.length$HIGHDEG <- as.factor(n.length$HIGHDEG)
+
+p.length <- ggplot(n.length, aes(x=HIGHDEG, y=count, fill=HIGHDEG)) +
+  facet_grid(. ~ school) +
+  geom_bar(stat = "identity") +
+  labs(title="Colleges by Degree Type",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Number of Colleges") +
+  scale_x_discrete(name="Degree Type",labels=c("Non-Degree","Cert","AA","BA","Grad")) +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1))   
+p.length
+```
+
+I'm not sure what conclusions we can draw about regional distribution of colleges, beyond the fact that the Southeast appears overrepresented. Deeper analysis should adjust college counts by total population to compare the number of colleges *per capita.*
+
+```{r eval=T, echo=F, out.width='100%'}
+#Region
+n.region <- scorecard %>%  
+  group_by(REGION, CONTROL) %>% 
+  summarize(count=n()) %>% 
+  mutate(school=ifelse(CONTROL==1,"Public",
+                       ifelse(CONTROL==2,"Private Non-profit","Private For-profit")))
+n.region$REGION <- as.factor(n.region$REGION)
+levels(n.region$REGION) <- c("US Service Schools","New England","Mid-Atlantic",
+                             "Great Lakes","Plains","Southeast","Southwest",
+                             "Rockies","West","US Territories")
+
+p.region <- ggplot(n.region, aes(x=REGION, y=count, fill=REGION)) +
+  facet_grid(. ~ school) +
+  geom_bar(stat = "identity") +
+  labs(title="Colleges by Region",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Number of Colleges") +
+  theme(axis.text.x=element_blank(),
+      axis.ticks.x=element_blank()) 
+p.region
+
+```
+
+**2.2**\. Categorize student graduation counts by degree name
+
+Health, business/marketing, cuinary, and humanities are all top majors:
+
+```{r, echo=F}
+major <- sqldf(paste("SELECT CONTROL",
+               ",AVG(PCIP01) AS PCIP01",
+               ",AVG(PCIP03) AS PCIP03",
+               ",AVG(PCIP04) AS PCIP04",
+               ",AVG(PCIP05) AS PCIP05",
+               ",AVG(PCIP09) AS PCIP09",
+               ",AVG(PCIP10) AS PCIP10",
+               ",AVG(PCIP11) AS PCIP11",
+               ",AVG(PCIP12) AS PCIP12",
+               ",AVG(PCIP13) AS PCIP13",
+               ",AVG(PCIP14) AS PCIP14",
+               ",AVG(PCIP15) AS PCIP15",
+               ",AVG(PCIP16) AS PCIP16",
+               ",AVG(PCIP19) AS PCIP19",
+               ",AVG(PCIP22) AS PCIP22",
+               ",AVG(PCIP23) AS PCIP23",
+               ",AVG(PCIP24) AS PCIP24",
+               ",AVG(PCIP25) AS PCIP25",
+               ",AVG(PCIP26) AS PCIP26",
+               ",AVG(PCIP27) AS PCIP27",
+               ",AVG(PCIP29) AS PCIP29",
+               ",AVG(PCIP30) AS PCIP30",
+               ",AVG(PCIP31) AS PCIP31",
+               ",AVG(PCIP38) AS PCIP38",
+               ",AVG(PCIP39) AS PCIP39",
+               ",AVG(PCIP40) AS PCIP40",
+               ",AVG(PCIP41) AS PCIP41",
+               ",AVG(PCIP42) AS PCIP42",
+               ",AVG(PCIP43) AS PCIP43",
+               ",AVG(PCIP44) AS PCIP44",
+               ",AVG(PCIP45) AS PCIP45",
+               ",AVG(PCIP46) AS PCIP46",
+               ",AVG(PCIP47) AS PCIP47",
+               ",AVG(PCIP48) AS PCIP48",
+               ",AVG(PCIP49) AS PCIP49",
+               ",AVG(PCIP50) AS PCIP50",
+               ",AVG(PCIP51) AS PCIP51",
+               ",AVG(PCIP52) AS PCIP52",
+               ",AVG(PCIP54) AS PCIP54 ",
+               "FROM scorecard ",
+               "WHERE CAST(UGDS as INT) > 100 ",
+               "GROUP BY CONTROL", sep=""))
+major$CONTROL <- c("Public","Private Non-Profit","Private For-profit")
+major.list <- c('agriculture'
+                ,'resources'
+                ,'architecture'
+                ,'ethnic_cult_gender'
+                ,'communication'
+                ,'comms_tech'
+                ,'computer'
+                ,'culinary'
+                ,'education'
+                ,'engineering'
+                ,'eng_tech'
+                ,'language'
+                ,'family_science'
+                ,'legal'
+                ,'english'
+                ,'humanities'
+                ,'library'
+                ,'biological'
+                ,'mathematics'
+                ,'military'
+                ,'multidiscipline'
+                ,'parks_rec_fitness'
+                ,'philosophy_relig'
+                ,'theology_relig'
+                ,'physical_science'
+                ,'science_tech'
+                ,'psychology'
+                ,'security_law_enf'
+                ,'pub_admin_soc_service'
+                ,'social_science'
+                ,'construction'
+                ,'mechanic_repair_tech'
+                ,'precision_production'
+                ,'transportation'
+                ,'visual_performing'
+                ,'health'
+                ,'business_marketing'
+                ,'history')
+colnames(major) <- c("Type",major.list)
+t.major <- melt(major, id="Type")
+
+p.major <- ggplot(t.major[1:114,], aes(x=variable, y=value, fill=Type)) +
+  #facet_wrap(~ variable) +
+  labs(title="Percentage of Degrees Awarded by Major",subtitle="US DOE College Scorecard Data 2014-2015") +
+  geom_bar(stat="identity", position = "stack") +
+  scale_y_continuous(name="Percent") +
+  scale_x_discrete(name="Major",labels=major.list) +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+t.major2 <- t.major[order(t.major$value, decreasing=T),]
+```
+
+```{r eval=T, echo=F, out.width='100%'}
+p.major
+```
+
+Top 5 majors by college type:
+
+```{r eval=T, echo=T}
+#public
+t.major2[t.major2$Type=="Public",][1:5,]
+```
+
+```{r eval=T, echo=T}
+#private non-prof
+t.major2[t.major2$Type=="Private Non-Profit",][1:5,]
+```
+
+```{r eval=T, echo=T}
+#private for-prof
+t.major2[t.major2$Type=="Private For-profit",][1:5,]
+```
+
+Private for-profit schools are the main providers of culinary programs, while private non-profit colleges specialize in theology/religious studies (likely religiously-affiliated colleges) and the visual and performing arts.
+
+***
+#### Study Evaluation
+
+**3.1**\. Study type, experimental model, and approach
+
+The College Scorecard (https://collegescorecard.ed.gov/data/) is a collection of data on US colleges regarding school and student demographics, degrees awarded by subject area, as well as financial information including average degree cost by income bracket, student tuition and scholarships, repayment rates, and post-college earnings.
+
+Data are self-reported and observational (there are no tests or treatments being applied).
+
+Experimental design:
+
+* Predict each college's graduation rate (completion of a 4-year degree within 6 years)
+* Response variable, graduation rate, is a numeric attribute with a range of [0,1]
+* My approach is to use data from the 2013/14 academic year (year t-1) to predict graduation rates in the subsequent year, the 2014-15 academic year (year t)
+* Features will be generated from the College Scorecard data set and include numeric and categorical attributes
+
+**3.2**\. Bias 
+
+* Data exclude part-time students
+* Data are self-reported. There is potential response bias because only schools that are good performers are incentivized to provide information
+* Evaluation of graduation rates is focused on completing a 4-year degree, when most students don't do a Bachelor's, they do trade school or associate's degree. In general, performance criteria might be more geared towards 4-year degree holders than community colleges.
+
+**3.3**\. Hypothesis
+
+1) School selectivity - as measured by admissions rate and average SAT score - is positively correlated with graduation rate.
+
+2) School ownership (Public/Private non-profit/Private for-profit) is correlated with graduation rate. Specifically, private non-profits have the highest graduation rate, followed by public colleges followed by private for-profit colleges.
+
+3) Graduation rates are highest for graduate students, followed by Bachelor's, Associate's, and certificates.
+
+***
+#### Summary analysis - Value-add analysis for education
+
+**4.0**\. Cost by College Type
+
+Private non-profit colleges are more than twice as expensive as Public colleges and nearly 40% more expensive than Private for-profit colleges.
+
+```{r eval=T, echo=FALSE, out.width='100%'}
+cost.type <- scorecard %>% 
+  filter(!is.na(COSTT4_A)) %>% 
+  group_by(CONTROL) %>% 
+  summarize(avg_cost=mean(COSTT4_A)) %>% 
+  mutate(type=ifelse(CONTROL==1,"Public",
+                       ifelse(CONTROL==2,"Private Non-profit","Private For-profit"))) %>% 
+  select(type, avg_cost)
+cost.type
+```
+
+**4.1**\. Cost by Degree
+
+Most of the cost differential between Private non-profit and for-profit colleges is due to the face that Bachelor's and graduate degrees at Private non-profit schools are significantly more expensive than at Private for-profits.
+
+Surprisingly, there is not a large cost increase at Private for-profits as you go from certificate degrees to Associate's and Bachelor's.
+
+```{r eval=T, echo=FALSE, out.width='100%'}
+cost.prog <- scorecard %>% 
+  filter(!is.na(COSTT4_A) & PREDDEG != 0) %>% 
+  group_by(CONTROL, PREDDEG) %>% 
+  summarize(avg_cost=mean(COSTT4_A)) %>%
+  mutate(type=(ifelse(CONTROL==1,"Public",
+                     ifelse(CONTROL==2,"Private Non-profit","Private For-profit"))),
+         degree=(ifelse(PREDDEG==1,'Cert',
+                       ifelse(PREDDEG==2,'AA',
+                              ifelse(PREDDEG==3,'BA','Grad')))))
+
+cost.prog$degree = as.factor(cost.prog$degree)
+cost.prog$degree <- factor(cost.prog$degree,levels(cost.prog$degree)[c(3,1,2,4)])
+cost.prog$type = as.factor(cost.prog$type)
+cost.prog$type <- factor(cost.prog$type,levels(cost.prog$type)[c(3,2,1)])
+  
+p.prog <- ggplot(cost.prog, aes(x=degree, y=avg_cost, fill=type)) +
+  #facet_wrap(~ variable) +
+  labs(title="Percentage of Degrees Awarded by Degree and College Type",subtitle="US DOE College Scorecard Data 2014-2015") +
+  geom_bar(stat="identity", position="dodge") +
+  scale_y_continuous(name="Percent") +
+  scale_x_discrete(name="Major") +
+  theme(#legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1)) 
+p.prog
+
+```
+
+**4.1a**\. Cost by Major
+
+The most expensive majors cost 2-3x the least expensive.  The most expensive majors are those most-commonly awarded at Private colleges (Philosophy, Religion, Ethnic/Cutlural/Gender studies, Architecture), while the least-expensive majors are associated with skilled trades (Mechanic/Repair/Technician, Construction, and Precision Production).
+
+```{r eval=T, echo=FALSE, out.width='100%'}
+majors <- grep("PCIP", names(scorecard), value = TRUE)
+
+#empty dataframe
+cost.deg <- data.frame(CONTROL=c(0,1,2,3))
+
+#loop over each major
+for(i in 1:length(majors)){
+#by major
+  prep <-   scorecard  %>% 
+    select(CONTROL, UGDS, COSTT4_A, which(colnames(scorecard)==majors[i])) %>% 
+    filter(!is.na(COSTT4_A)) 
+  
+  prep2 <- prep %>% 
+    mutate(cnt=UGDS*(get(majors[i],envir=as.environment(prep)))) %>% 
+    select(CONTROL, COSTT4_A, UGDS, cnt) %>% 
+    group_by(CONTROL) %>%  
+    summarize(weighted.mean(COSTT4_A,cnt))
+
+  #across all colleges
+  cost.all <-  scorecard %>% 
+    select(COSTT4_A, UGDS, which(colnames(scorecard)==majors[i])) %>% 
+    filter(!is.na(COSTT4_A))
+  
+  cost.all2 <- cost.all %>% 
+    mutate(cnt=UGDS*get(majors[i],envir=as.environment(cost.all))) %>% 
+    summarise(all=weighted.mean(COSTT4_A,cnt))
+
+  cost.deg <- cbind(cost.deg,rbind(c(cost.all2[1,1]),prep2[,2]))
+}
+
+colnames(cost.deg) <- c("CONTROL",major.list)
+
+t.cost.deg <- melt(cost.deg,id="CONTROL")
+t.cost.deg.all <- t.cost.deg[t.cost.deg$CONTROL==0,]
+
+#order by cost
+t.cost.deg.all$variable <- factor(t.cost.deg.all$variable,
+                                  levels=t.cost.deg.all$variable[order(t.cost.deg.all$value, decreasing=T)])
+
+p.cost.deg <- ggplot(t.cost.deg.all, aes(x=variable, y=value)) +
+  geom_bar(stat="identity", fill="purple") +
+  labs(title="Average Annual Cost by Major",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Cost per Academic Year (Dollars)") +
+  scale_x_discrete(name="Major") +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1)) 
+p.cost.deg
+```
+
+**4.2**\. Cost by College
+
+The most expensive colleges are all Private non-profit schools, mostly located in major metropolitan areas.  Community colleges are the most affordable, whereas if you want to attend a low-cost Private college, head to the Caribbean!
+
+```{r eval=T, echo=FALSE}
+cost_coll <-  sqldf(paste("SELECT HIGHDEG, CONTROL, INSTNM, UGDS, COSTT4_A ",
+      "FROM scorecard ",
+      "WHERE COSTT4_A is not null ",
+      "AND CAST(UGDS AS INT) > 1000 ",
+      "ORDER BY HIGHDEG, CONTROL, INSTNM, COSTT4_A",sep=""))
+```
+
+Top 5 most expensive colleges
+```{r eval=T, echo=FALSE}
+sqldf(paste("SELECT INSTNM, COSTT4_A ",
+            "FROM cost_coll ",
+            "ORDER BY COSTT4_A DESC",sep=""))[1:5,]
+```
+
+Top 5 least expensive colleges
+```{r eval=T, echo=FALSE}
+sqldf(paste("SELECT INSTNM, COSTT4_A ",
+            "FROM cost_coll ",
+            "ORDER BY COSTT4_A",sep=""))[1:5,]
+```
+
+Top 5 least expensive Private non-profit  schools
+```{r eval=T, echo=FALSE}
+sqldf(paste("SELECT INSTNM, COSTT4_A ",
+            "FROM cost_coll ",
+            "WHERE CONTROL==2 ",
+            "ORDER BY COSTT4_A",sep=""))[1:5,]
+```
+
+**4.3**\. College completion rates by state, compared to national average
+
+```{r eval=T, echo=FALSE, out.width='100%'}
+#National average
+  #(4 year public college 6 years after enrollment)
+comp.rt.natl <- sqldf(paste("SELECT avg(C150_4) as avg_comp_rt ",
+            "FROM scorecard ",
+            "WHERE CONTROL==1 and HIGHDEG>=3",sep=""))
+#46%
+
+#by state, among 4-year public institutions
+comp.rt.st <- sqldf(paste("SELECT STABBR as state, avg(C150_4) as avg_comp_rt ",
+            "FROM scorecard ",
+            "WHERE CONTROL==1 and HIGHDEG>=3 ",
+            "GROUP BY state ",
+            "ORDER BY avg_comp_rt DESC",sep=""))
+
+#order by completion rate
+comp.rt.st$state <- factor(comp.rt.st$state,
+                          levels=comp.rt.st$state[order(comp.rt.st$avg_comp_rt, decreasing=T)])
+
+#plot
+p.comp.rt <- ggplot(comp.rt.st, aes(x=state, y=avg_comp_rt)) +
+  geom_bar(stat="identity", fill="purple") +
+  geom_hline(aes(yintercept=comp.rt.natl[1,1], colour="red"),size=1) +
+  labs(title="Completion Rate by State among 4-Year Public Colleges",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Percent of First Time Students Graduating Within 6 Years") +
+  scale_x_discrete(name="State") +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 0)) 
+p.comp.rt
+```
+
+***
+#### Predictive Model
+
+Target = predict student graduation rate
+Train model on year T-1 (2013/2014 data) and evaluate predictions accuracy in year T (2014/2015 data)
+
+**5.1**\. Evaluate the primary features that affect college program completion
+
+I chose to start with a regression tree to give first impressions of the key predictors of colleges' graduation rates.
+
+```{r eval=T, echo=TRUE}
+#Add additional predictors to the "scorecard" dataset used for data exploration
+new.vars <- c('RELAFFIL','ADM_RATE','SAT_AVG','INEXPFTE','AVGFACSAL',
+              'PFTFAC','PCTPELL','AGE_ENTRY','HCM2','MAIN','CCBASIC',
+              'CCUGPROF','CCSIZSET','PCTFLOAN','FEMALE','MARRIED',
+              'DEPENDENT','VETERAN','FIRST_GEN','ICLEVEL','FAMINC')
+
+data14 <- cbind(scorecard,df_14_15[,new.vars])
+
+#delete obs with missing target variable
+data14 <- data14[!is.na(data14$C150_4),]
+                   
+#import training data (2013/14 data)
+df_13_14 <- as.data.frame(fread("C:/Users/nadav.rindler/OneDrive - American Red Cross/Training/UW Data Science Certificate/DS250/Course Project/CollegeScorecard_Raw_Data/MERGED2013_14_PP.csv", 
+                                na.strings=c("NULL","PrivacySuppressed")))
+#fix UNITID name
+colnames(df_13_14)[1] <- c("UNITID")
+
+#training data
+data13 <- df_13_14[!is.na(df_13_14$C150_4),which(names(df_13_14) %in% colnames(data14))]
+
+#Regression Tree
+library(rpart)
+library(rpart.plot)
+
+#check null values - some attributes are entirely null
+null_list <- colSums(is.na(data13), na.rm=FALSE)
+nulls <- null_list[null_list>0]
+nulls 
+
+#convert some numeric values to factor
+data13$CONTROL <- as.factor(data13$CONTROL)
+data13$REGION <- as.factor(data13$REGION)
+data13$ICLEVEL <- as.factor(data13$ICLEVEL)
+
+data14$CONTROL <- as.factor(data14$CONTROL)
+data14$REGION <- as.factor(data14$REGION)
+data14$ICLEVEL <- as.factor(data14$ICLEVEL)
+
+#data transformations
+data13$INEXPFTE_exp <- exp(data13$INEXPFTE)
+data14$INEXPFTE_exp <- exp(data14$INEXPFTE)
+
+#religious affiliation doesn't exist in 2013 data. Join from 2014 data
+  #create an indicator variable to identify ANY religiously-affiliated college
+data13 <- data13 %>%
+  select(-RELAFFIL) %>% 
+  left_join(data14[,c("UNITID","RELAFFIL")], by="UNITID") %>% 
+  mutate(RELAFFIL_IND=ifelse(RELAFFIL>=0,1,0))
+data14$RELAFFIL_IND <- ifelse(data14$RELAFFIL>=0,1,0)
+
+#remove from predictors - target var, ID vars, null vars
+exclude <- c("C150_4","UNITID","INSTNM","HCM2","LOCALE","CCBASIC","CCUGPROF",
+             "CCSIZSET","RELAFFIL","LNFAMINC","STABBR","COSTT4_A")
+varnames <- names(data13)[-which(names(data13) %in% exclude)]
+fmla <- as.formula(paste("C150_4 ~ ", paste(varnames, collapse= "+")))
+
+#Train tree
+grad.tree <-  rpart(fmla,data = data13, method="anova",
+                      control=rpart.control(cp=0.001)) #increase model complexity over default (cp=0.01)
+
+#prune tree to node with min xerror
+p.grad.tree <- prune(grad.tree, cp=grad.tree$cptable[which.min(grad.tree$cptable[,"xerror"]),"CP"])
+
+#plot tree
+prp(p.grad.tree,faclen=2,varlen=20,cex=0.5)
+```
+
+I'm surprised that the most important predictors of a college's graduation rate relate to its students' family incomes. Family income (FAMINC), percentage of the student body on Pell Grants (PCTPELL), average age at college entry (AGE_ENTRY), percentage of first generation students (FIRST_GEN), percentage of dependent students (DEPENDENT), and percentage of students on federal loans (PCTFLOAN) are all measures of the demographics and socioeconomic background of the student body.*
+
+There are also several important predictors related to average SAT score and educational resources (instructional expenditure per student, INEXPFTE, and average faculty salary, AVGFACSAL)
+
+*Note: Demographic data such as family income, etc. come from the National Student Loan Data System (NSLDS) which is pulling the data from students' FAFSA forms.
+
+```{r eval=T, echo=T}
+#variable importance
+importance <- as.data.frame(sort(p.grad.tree$variable.importance,decreasing=TRUE))
+colnames(importance) <- "importance"
+head(importance, n=10)
+```
+
+Let's visualize some of these relationships:
+```{r eval=T, echo=F, out.width='100%'}
+#chart key predictors
+
+#family income
+l.reg <- coef(lm(C150_4 ~ FAMINC, data = data13))
+
+p.inc <- ggplot(data14[!is.na(data14$FAMINC),], aes(x=FAMINC, y=C150_4)) +
+  geom_point() +
+  geom_abline(intercept=l.reg[1],slope=l.reg[2], colour="red", size=1) +
+  labs(title="Completion Rate by Family Income",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Percent of First Time Students Graduating Within 6 Years") +
+  scale_x_discrete(name="Family Income") +
+  theme(legend.position="none") 
+p.inc
+
+#SAT Score
+l.reg.sat <- coef(lm(C150_4 ~ SAT_AVG, data = data13))
+
+p.sat <- ggplot(data14[!is.na(data14$SAT_AVG),], aes(x=SAT_AVG, y=C150_4)) +
+  geom_point() +
+  geom_abline(intercept=l.reg.sat[1],slope=l.reg.sat[2], colour="red", size=1) +
+  labs(title="Completion Rate by Average SAT Score",subtitle="US DOE College Scorecard Data 2014-2015") +
+  scale_y_continuous(name="Percent of First Time Students Graduating Within 6 Years") +
+  scale_x_discrete(name="Average SAT Score") +
+  theme(legend.position="none") 
+p.sat
+```
+
+As it turns out, there is a high degree of correlation between predictors related to (1) student body's socioeconomic background; (2) average SAT score; and (3) college's educational expenditure:
+
+```{r echo=F, eval=T}
+cor.vars <- c("C150_4","FAMINC","PCTPELL","SAT_AVG","AGE_ENTRY","FIRST_GEN",
+              "INEXPFTE","DEPENDENT","AVGFACSAL","PCIP52","PCIP51")
+
+library(corrplot)
+corrplot(cor(data13[,cor.vars],use="complete.obs"),method="color",tl.col="black", tl.srt=45)
+```
+
+
+**5.2**\. Predict student graduation rates by college
+
+Given the high degree of collinearity between key predictors, I opted to use Principal Component Analysis (PCA) to reduce the set of predictors to a smaller set of linearly-uncorrelated variables, while still maximizing variance of each principal component.
+
+I used the initial regression tree to do variable selection, plugging in the predictors identified by the tree as inputs to the PCA.
+
+This approach has several limitations:
+  - PCA can't handle null values. Using PCA I was only able to predict graduation rates for ~50% of colleges. Deeper analysis should account for null values using imputation or selecting predictors that have good data coverage.
+  - PCA can only handle numeric inputs, so categorical attributes must be converted to numeric. This works well for categorical variables which are ordinal, but not so well for those which are nominal (no inherent order between levels).
+
+```{r eval=T, echo=T}
+library(psych)       #PCA package
+library(FactoMineR)  #additional PCA analysis
+
+#prepare pca dataset
+pca.df <- data13[,cor.vars]
+pca.df$C150_4 <- NULL
+pca.df <- as.data.frame(lapply(pca.df , as.numeric))
+
+#train pca
+pca.rotate = principal(pca.df, nfactors=3, rotate = "varimax")
+
+#apply pca scores
+pca.scores = as.data.frame(pca.rotate$scores)
+pca.df <- cbind(pca.df, pca.scores, C150_4=data13$C150_4)
+  
+#linear regression using principal components
+pca.lm = lm(C150_4~RC1+RC2+RC3, data=pca.df)
+summary(pca.lm)
+#Note the 1146 obs deleted due to missing values
+```
+
+**5.2a**\. Evaluate model results
+
+Ultimately the PCA linear regression approach outperformed the simple regression tree trained previously.  
+
+However, this could be due to the fact that the PCA linear model is trained only on the subset of schools which report average SAT scores (roughly half the dataset), and when AVG_SAT is excluded from the PCA model, model MSE jumps and is closer to the regression tree error rate.
+
+PCA linear model mean squared error (MSE) on test data:
+```{r echo=F, eval=T}
+#prepare test data set
+pca.test <- data14[,cor.vars]
+pca.test$C150_4 <- NULL
+pca.test <- as.data.frame(lapply(pca.test , as.numeric))
+
+#apply PCA scores to test data
+pca.test <- as.data.frame(predict(pca.rotate, pca.test))
+pca.test <- cbind(data14[,cor.vars], pca.test)
+
+#predict linear model output (graduation rates) on test data
+pca.test.pred <- as.data.frame(predict(pca.lm, pca.test)) 
+colnames(pca.test.pred) <- "predicted_prob"
+
+# Calculate test MSE
+mean((pca.test[!is.na(pca.test$RC1),"C150_4"] - pca.test.pred[!is.na(pca.test.pred$predicted_prob),"predicted_prob"])^2)
+```
+
+Regression tree mean squared error (MSE) on test data:
+```{r echo=F, eval=T}
+# Calculate Predictions
+test.pred <- as.data.frame(predict(p.grad.tree, data14)) 
+colnames(test.pred) <- "predicted_prob"
+
+# Calculate MSE
+mean((data14$C150_4 - test.pred$predicted_prob)^2)
+```
+
+Baseline for comparison - average graduation rate among colleges in test data:
+```{r echo=F, eval=T}
+mean(data14$C150_4)
+```
+
+Examine residuals - which schools are the top over/underperformers for graduation rate compared to my prediction?
+```{r echo=F, eval=T}
+#Which schools outperform their predicted graduation rates the most?
+pca.test <- cbind(data14[,c("UNITID","INSTNM","STABBR","CONTROL","RELAFFIL_IND","FEMALE")],pca.test, pca.test.pred)
+
+#residual = actual - predicted
+pca.test$resid <- pca.test$C150_4 - pca.test$predicted_prob
+```
+
+Overperforming colleges are likely to be religiously affiliated private non-profit schools. Several are health/nursing focused, and many have a high percentage of female students.
+```{r echo=F, eval=T}
+#outperformers - largest positive residuals
+pca.test[order(pca.test$resid,decreasing=T),c("INSTNM","C150_4","CONTROL","RELAFFIL_IND","FEMALE","resid")][1:10,] 
+```
+
+Underperforming colleges are a mix of public and private non-profit schools. There seems to be some geographic concentration in the southeast/
+```{r echo=F, eval=T}
+#underperformers - largest negative residuals
+underperf <- pca.test[order(pca.test$resid,decreasing=F),]
+underperf[underperf$predicted_prob<=1,c("INSTNM","C150_4","CONTROL","STABBR","resid")][1:10,]
+```
+
+To address the patterns observed in the residuals, I tried including religious affiliation and region into the PCA linear regression model, but these attributes did not improve model fit.  It's possible that:
+  - Only certain kinds of religious schools are associated with overperformance. Or, there could be an interaction between religious affiliation and healthcare-focused schools.
+  - The geographic relationship may be at the state level rather than at the regional level. Or, it could be that the region definition could be changed to better reflect certain underperforming regions (e.g. "Appalachian Region" vs. Mid-Atlantic and Southeast).
+
+***
+#### Infographic
+![](/img/Infographic.png)
+
+#### **End**

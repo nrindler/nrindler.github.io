@@ -1,0 +1,19 @@
+---
+title: "Presenting at Python Saigon"
+author: "Nadav Rindler"
+date: "2017-02-25T00:00:00-05:00"
+categories: ["R"]
+tags: ["R", "Python", "Vietnam","Data Visualization"]
+showonlyimage: true
+draft: false
+image: "/img/vietnam.png"
+weight: 1
+---
+
+I had the opportunity to present on "Communicating Results in R" at the weekly **[Python Saigon Meetup](https://www.meetup.com/Thanh-Pho-Ho-Chi-Minh-Python-Meetup/)**, on Feb 25, 2017 in Ho Chi Minh City, Vietnam.
+
+We had a great discussion and shared data visualization tools and techniques.
+
+Materials are available on **[my GitHub](https://github.com/nrindler/saigon-meetup)**, including a **[RPres slide deck](/post/meetup.html)** with links and resources for learning R and data visualization.
+
+![Presenting at Python Saigon](/img/saigon.jpg){width=600px}

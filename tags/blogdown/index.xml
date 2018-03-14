@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogdown on nadav &#43; analytics</title>
+    <link>/tags/blogdown/</link>
+    <description>Recent content in Blogdown on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 06 Mar 2017 00:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/blogdown/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Build a Custom Website with R Studio and GitHub Pages, Part 1</title>
+      <link>/portfolio/build-website/</link>
+      <pubDate>Mon, 06 Mar 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/build-website/</guid>
+      <description>One of R Studio’s best features is the ability to publish analyses in a reproducible, visually-appealing way using R Markdown. R Markdown weaves together text and R code chunks in an easy-to-use interface, allowing you to publish reports, presentations, and dashboards across formats – PDF, HTML HTML slides, books, websites, and blogs.
+I first began using R Markdown to produce slide decks for work as an alternative to Powerpoint. R Markdown’s advantage is that should my data or code change, the changes are instantly reflected in the output by simply re-“knitting” the R Markdown file.</description>
+    </item>
+    
+  </channel>
+</rss>

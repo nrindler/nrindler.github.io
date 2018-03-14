@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on nadav &#43; analytics</title>
+    <link>/tags/python/</link>
+    <description>Recent content in Python on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Feb 2017 00:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Presenting at Python Saigon</title>
+      <link>/portfolio/pythonsaigon/</link>
+      <pubDate>Sat, 25 Feb 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/pythonsaigon/</guid>
+      <description>I had the opportunity to present on “Communicating Results in R” at the weekly Python Saigon Meetup, on Feb 25, 2017 in Ho Chi Minh City, Vietnam.
+We had a great discussion and shared data visualization tools and techniques.
+Materials are available on my GitHub, including a RPres slide deck with links and resources for learning R and data visualization.
+Presenting at Python Saigon
+</description>
+    </item>
+    
+  </channel>
+</rss>

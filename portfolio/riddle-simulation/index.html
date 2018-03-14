@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Solving a Riddle with a Simulation</title>
+<meta name="description" content="nadav&#39;s data science portfolio">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700,400italic">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/owl.carousel.css">
+<link rel="stylesheet" href="/css/owl.theme.css">
+
+
+  <link href="/css/style.blue.css" rel="stylesheet" id="theme-stylesheet">
+
+ 
+
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+
+<link href="/css/custom.css" rel="stylesheet">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+</head>
+<body>
+  <div id="all">
+      <div class="container-fluid">
+          <div class="row row-offcanvas row-offcanvas-left">
+              <div id="sidebar" class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas">
+  <div class="sidebar-content">
+    <h1 class="sidebar-heading"><a href="/">nadav &#43; analytics</a></h1>
+    
+      <p class="sidebar-p">Data scientist, 'R-vangelist', traveler, bicycling enthusiast, DC native.</p>
+    
+      <p class="sidebar-p">Marketing analytics @AmericanRedCross, views are my own.</p>
+    
+    <ul class="sidebar-menu">
+      
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About</a></li>
+      
+        <li><a href="/contact/">Get in touch</a></li>
+      
+    </ul>
+    <p class="social">
+  
+  
+  
+  
+  
+  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
+    <i class="fa fa-linkedin"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/nrindler" data-animate-hover="pulse">
+    <i class="fa fa-github"></i>
+  </a>
+  
+</p>
+
+
+    <div class="copyright">
+      <p class="credit">
+        
+          &copy;2018 Nadav Rindler
+        
+        | Template by <a href="https://bootstrapious.com/free-templates" class="external">Bootstrapious.com</a>
+
+&amp; ported to Hugo by <a href="https://github.com/kishaningithub">Kishan B</a>
+
+      </p>
+    </div>
+  </div>
+</div>
+
+              
+<div class="col-xs-12 col-sm-8 col-md-9 content-column white-background">
+  <div class="small-navbar visible-xs">
+  <button type="button" data-toggle="offcanvas" class="btn btn-ghost pull-left"> <i class="fa fa-align-left"> </i>Menu</button>
+  <h1 class="small-navbar-heading"><a href="/">nadav &#43; analytics</a></h1>
+</div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="content-column-content">
+         <h1>Solving a Riddle with a Simulation</h1>
+         <div id="will-the-baby-walk-away" class="section level1">
+<h1>Will the baby walk away?</h1>
+<p>Nate Silver’s famous FiveThirtyEight blog posts a weekly riddle challenge. This week’s riddle is about <a href="https://fivethirtyeight.com/features/will-the-baby-walk-away-will-the-troll-kill-the-dwarves/">a baby learning to walk</a>.</p>
+<div class="figure">
+<img src="/img/Babys_day_out_poster.jpg" alt="Classic" />
+<p class="caption">Classic</p>
+</div>
+<div id="riddle-express" class="section level3">
+<h3>Riddle Express:</h3>
+<blockquote>
+<p>Your baby is learning to walk. The baby begins by holding onto a couch. Whenever she is next to the couch, there is a 25 percent chance that she will take a step forward and a 75 percent chance that she will stay clutching the couch. If the baby is one or more steps away from the couch, there’s a 25 percent chance that she will take a step forward, a 25 percent chance she’ll stay in place and a 50 percent chance she’ll take one step back toward the couch.</p>
+</blockquote>
+<blockquote>
+<p>In the long run, what percent of the time does the baby choose to clutch the couch?</p>
+</blockquote>
+<hr />
+<p>That’s a head scratcher! I am not sure how to calculate this. Luckily, I don’t have to.</p>
+<p>Instead, let’s <em>simulate</em> what happens with a virtual baby, “Cassidy” and virtual couch using R. We can run through the same simulation many times, varying the number of steps the baby takes, in order to see what happens in the long term.</p>
+</div>
+<div id="generate-random-number" class="section level3">
+<h3>Generate Random Number</h3>
+<p>First, I can have R randomly choose whether Baby Cassidy stays still, steps forward, or steps backwards by randomly sampling one number from a set of numbers that replicate the probabilities listed in the riddle.</p>
+<p>Here, I’m simulating lil’ Cass at the couch - randomly generating a number that is either a 0 (baby stays at couch) or a 1 (baby steps forward). As specified in the riddle, there is a 75% chance of staying at the couch (0) and 25% chance of stepping forward (1):</p>
+<pre class="r"><code>sample(c(0,0,0,1),1)</code></pre>
+<p>The probabilities change when the little tyke is no longer at the couch. Now we’re told that there is a 25% chance of stepping forward (+1), a 25% chance of standing still (0), and a 50% chance of stepping backwards:</p>
+<pre class="r"><code>sample(c(1,0,-1,-1),1)</code></pre>
+</div>
+<div id="if-else" class="section level3">
+<h3>If Else</h3>
+<p>Baby Cassidy is more adventurous when she’s not clinging to the couch. If at the couch, do X. If away from the couch, do Y. This sounds like an if-else statement.</p>
+<p>In order to know which probabilities to apply, we have to know where Cass is. That’s stored in the variable “c”, which is updated after every step. If c equals 0, we know the tot is at the couch, and c&gt;0 denotes the number of steps away from the couch.</p>
+<p>You can also see the random number generator (“r”) at work - that’s how we’re “simulating” what she will do next.</p>
+<p>Finally, the variable “y” is a list that records which action Cass takes at each step.</p>
+<p>We loop over the if-else statements “x” number of times times – if x equals 100, that means we get to observe Cass’ steps 100 times in our simulation.</p>
+<pre class="r"><code>  c &lt;-  0 #location - 0 = at couch, &gt;0 = number of steps away from the couch
+  y &lt;- list() #empty list to record location at each iteration
+  r &lt;- 0 # 0 = stay still, 1 = step forward, -1 = step back
+  for(i in 1:x){
+    if(c==0){
+      r &lt;- sample(c(0,0,0,1),1)
+      c = c+r
+      y &lt;- c(y,c)
+    }
+    else if(c&gt;0){
+      r &lt;- sample(c(1,0,-1,-1),1)
+      c = c+r
+      y &lt;- c(y,c)
+    }</code></pre>
+</div>
+<div id="putting-it-all-together" class="section level3">
+<h3>Putting it all together</h3>
+<p>So what’s the answer to the riddle?</p>
+<p>I ran the simulation 100 times, varying the number of steps that we get to observe Baby Cassidy, from 10 steps to 1,000 steps. That allows us to see what she does in the “long term”.</p>
+<p>The code below takes our if-else statements, loops over them 10 to 1000 times depending on the simulation. It stores each simulation’s results in a list (“l”), converts that list to a dataframe (“m”), and outputs the “percentage of time the baby is at the couch.” Lastly, I chart the data to see how the simulation behaves as we increase the number of steps.</p>
+<pre class="r"><code>library(ggplot2)
+
+v &lt;- seq(10,1000,10) #100 simulations ranging from 10 to 1000 steps per simulation
+l &lt;- list() #empty list to store average location result
+
+for(x in v){ 
+  c &lt;-  0 #location - 0 = at couch, &gt;0 = number of steps away from the couch
+  y &lt;- list() #empty list to record location at each iteration
+  r &lt;- 0 # 0 = stay still, 1 = step forward, -1 = step back
+  for(i in 1:x){
+    if(c==0){
+      r &lt;- sample(c(0,0,0,1),1)
+      c = c+r
+      y &lt;- c(y,c)
+    }
+    else if(c&gt;0){
+      r &lt;- sample(c(1,0,-1,-1),1)
+      c = c+r
+      y &lt;- c(y,c)
+    }
+  }
+  y &lt;- as.data.frame(t(as.data.frame(y)))
+  y$loc &lt;- ifelse(y$V1==0,1,0) #1 means away from couch, 0 means couch
+  
+  l &lt;- c(l,mean(y$loc)) #mean loc == percent of the time baby is at couch
+}
+
+l &lt;- unlist(l)
+m &lt;- as.data.frame(cbind(v,l))
+colnames(m) &lt;- c(&quot;iterations&quot;,&quot;pct_couch&quot;)
+
+#View data frame with simulation results
+head(m)</code></pre>
+<pre><code>##   iterations pct_couch
+## 1         10 0.7000000
+## 2         20 0.8000000
+## 3         30 0.5666667
+## 4         40 0.3250000
+## 5         50 0.4200000
+## 6         60 0.2666667</code></pre>
+<pre class="r"><code>#generate a chart to visualize the percentage of time at the couch
+ggplot(m,aes(x=iterations, y=pct_couch)) +
+  geom_point() +
+  geom_abline(intercept=weighted.mean(m$pct_couch,m$iterations),slope=0, colour=&quot;red&quot;, size=1) +
+  labs(title=&quot;How often will the baby be at the couch?&quot;) +
+  scale_x_continuous(name=&quot;Iterations&quot;) +
+  scale_y_continuous(name=&quot;Percent of the time at the couch&quot;) </code></pre>
+<p><img src="/portfolio/riddle-simulation_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>It looks like as the number of steps in the simulation increases, Cass tends to spend 50% of the time away from the couch. Cheeky bugger!</p>
+</div>
+</div>
+
+         
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+      </div>
+  </div>
+  <script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.js"> </script>
+<script src="/js/ekko-lightbox.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/masonry.pkgd.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/front.js"></script>
+
+</body>
+</html>

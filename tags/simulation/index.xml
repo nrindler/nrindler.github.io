@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Simulation on nadav &#43; analytics</title>
+    <link>/tags/simulation/</link>
+    <description>Recent content in Simulation on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Mar 2017 00:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Solving a Riddle with a Simulation</title>
+      <link>/portfolio/riddle-simulation/</link>
+      <pubDate>Sun, 26 Mar 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/portfolio/riddle-simulation/</guid>
+      <description>Will the baby walk away?Nate Silver’s famous FiveThirtyEight blog posts a weekly riddle challenge. This week’s riddle is about a baby learning to walk.
+Classic
+Riddle Express:Your baby is learning to walk. The baby begins by holding onto a couch. Whenever she is next to the couch, there is a 25 percent chance that she will take a step forward and a 75 percent chance that she will stay clutching the couch.</description>
+    </item>
+    
+    <item>
+      <title>When is Capital Bikeshare faster than Uber?</title>
+      <link>/portfolio/cabiubercomparison/</link>
+      <pubDate>Tue, 05 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/cabiubercomparison/</guid>
+      <description>This is my Capstone Project for the University of Washington’s Certificate in Data Science. Submitted December, 2017, at the completion of DS450: Deriving Knowledge from Data at Scale.
+1. IntroductionProblem StatementWhen is it faster to bicycle or take Uber in Washington D.C.? When you rent a bikeshare, how long will it take to get to your destination?</description>
+    </item>
+    
+  </channel>
+</rss>

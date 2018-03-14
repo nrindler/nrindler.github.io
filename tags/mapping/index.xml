@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mapping on nadav &#43; analytics</title>
+    <link>/tags/mapping/</link>
+    <description>Recent content in Mapping on nadav &#43; analytics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 05 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/mapping/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>When is Capital Bikeshare faster than Uber?</title>
+      <link>/portfolio/cabiubercomparison/</link>
+      <pubDate>Tue, 05 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/cabiubercomparison/</guid>
+      <description>This is my Capstone Project for the University of Washington’s Certificate in Data Science. Submitted December, 2017, at the completion of DS450: Deriving Knowledge from Data at Scale.
+1. IntroductionProblem StatementWhen is it faster to bicycle or take Uber in Washington D.C.? When you rent a bikeshare, how long will it take to get to your destination?</description>
+    </item>
+    
+  </channel>
+</rss>
