@@ -27,7 +27,7 @@
 
 
 <link href="/css/custom.css" rel="stylesheet">
-<link rel="shortcut icon" href="/img/favicon.png">
+<link rel="shortcut icon" href="/img/apple-touch-icon.png">
 
 
 </head>
@@ -58,10 +58,6 @@
   
   
   
-  
-  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
-    <i class="fa fa-envelope"></i>
-  </a>
   
   
   <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
@@ -137,7 +133,7 @@
 <div id="results-and-interpretation" class="section level2">
 <h2>Results and Interpretation</h2>
 <p>Stepwise linear regression found the daily fire count to be a key predictor of Singapore PSI, as well as the prior-day’s fire count (See Fig. 8). Week of year also has a large positive coefficient, meaning that as the week of the year increases so does Singapore PSI - this captures some of the seasonality given the higher PSI levels in Sept-Nov. Other predictors include rain, temperature, wind speed and hours of sunshine. Wind speed and hours of sunshine have negative coefficients - stronger wind and more hours of sunlight are correlated with lower PSI.</p>
-<p><strong>Fig. 8</strong> <img src="/img/DS350/stepwise_linreg_output.png" /></p>
+<p><strong>Fig. 8</strong> <img src="/img/DS350/stepwise_linreg_output.png" width="548" /></p>
 <p>.</p>
 <p>The model captures large movements in Singapore PSI but remains less predictive than I would like (see Fig. 9). Adjusted r-squared is 0.5484, and mean test error is 13.176, or 22.6% of the daily average PSI score. If given more time I explore adding new predictors (e.g., wind direction, measures of local pollution/emissions such as number of vehicle miles travelled). The prediction was more accurate for 2016 than for 2015, which may reflect how unusually-large the 2015 fires were. Finally, while the regression did underestimate PSI during Sept-Nov 2015 (as expected), it also underestimated PSI during Jan-Feb 2015 and 2016, which is typically during Singapore’s monsoon (rainy) season.</p>
 <p><strong>Fig. 9</strong> <img src="/img/DS350/plot_linreg_pred.png" width="800" /></p>

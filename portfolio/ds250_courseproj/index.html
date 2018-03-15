@@ -27,7 +27,7 @@
 
 
 <link href="/css/custom.css" rel="stylesheet">
-<link rel="shortcut icon" href="/img/favicon.png">
+<link rel="shortcut icon" href="/img/apple-touch-icon.png">
 
 
 </head>
@@ -58,10 +58,6 @@
   
   
   
-  
-  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
-    <i class="fa fa-envelope"></i>
-  </a>
   
   
   <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
@@ -338,16 +334,16 @@ importance &lt;- as.data.frame(sort(p.grad.tree$variable.importance,decreasing=T
 colnames(importance) &lt;- &quot;importance&quot;
 head(importance, n=10)</code></pre>
 <pre><code>##           importance
-## FAMINC     50.096603
-## PCTPELL    32.493998
-## AGE_ENTRY  19.999522
-## FIRST_GEN  18.883223
-## INEXPFTE   15.762103
-## DEPENDENT  15.186512
-## PCTFLOAN    6.169695
-## SAT_AVG     4.992112
-## AVGFACSAL   4.888402
-## PCIP42      4.148303</code></pre>
+## FAMINC     49.833834
+## PCTPELL    31.222093
+## AGE_ENTRY  19.237627
+## FIRST_GEN  18.525942
+## INEXPFTE   14.680300
+## DEPENDENT  14.319560
+## PCTFLOAN    5.376605
+## SAT_AVG     3.735139
+## AVGFACSAL   3.725172
+## PCIP54      3.247551</code></pre>
 <p>Let’s visualize some of these relationships: <img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-21-1.png" width="100%" /><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-21-2.png" width="100%" /></p>
 <p>As it turns out, there is a high degree of correlation between predictors related to (1) student body’s socioeconomic background; (2) average SAT score; and (3) college’s educational expenditure:</p>
 <p><img src="/portfolio/DS250_COURSEPROJ_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
@@ -401,7 +397,7 @@ summary(pca.lm)</code></pre>
 <p>PCA linear model mean squared error (MSE) on test data:</p>
 <pre><code>## [1] 0.008997365</code></pre>
 <p>Regression tree mean squared error (MSE) on test data:</p>
-<pre><code>## [1] 0.02223529</code></pre>
+<pre><code>## [1] 0.02325999</code></pre>
 <p>Baseline for comparison - average graduation rate among colleges in test data:</p>
 <pre><code>## [1] 0.4779574</code></pre>
 <p>Examine residuals - which schools are the top over/underperformers for graduation rate compared to my prediction?</p>

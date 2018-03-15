@@ -209,8 +209,9 @@ Additionally, I created various time series attributes from the CaBi ride date f
 ### Feature Selection
 I trained the model on all 2015 CaBi rides, and tested the model performance against all 2016 CaBi rides. I did feature selection by assessing each predictor's p-value for statistical significance, evaluation of multicollinearity (particularly for the weather attributes), as well as observing overall model's R-squared, mean absolute error (MAE), and mean absolute percentage error (MAPE) metrics on the test data set.  Once I found a model variant that I felt was easily interpretable and had the best performance, I selected that regression model and assessed performance on the validation set (all Q1 2017 CaBi rides).
 
-![](/img/cabi/cabi_reg_1.png)
-![](/img/cabi/cabi_reg_2.png)
+![](/img/cabi/cabi_reg_1.png){width=552px}
+
+![](/img/cabi/cabi_reg_2.png){width=526px}
 
 ### Model Performance
 On average, CaBi regression prediction is within 2.5 minutes (MAE) or 22.7% (MAPE) of the actual ride time.  This is not an exciting level of accuracy - ideally, I would like to be able to predict ride duration to within an average error of 1 minute / 10%.  Further accuracy gains may be difficult given (1) the difficulty in evaluating only CaBi rides for transportation as opposed to leisure (see: [**Data Filtering**](#df)); (2) the fact that adverse weather conditions may affect not only ride duration but also the composition of rides in ways not easily accounted for (e.g. fewer, more-urgent rides during rain could lead to faster ride times in wet conditions); and (3) need for additional predictors, such as total elevation gain for each ride.

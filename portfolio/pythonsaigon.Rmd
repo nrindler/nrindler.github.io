@@ -16,4 +16,4 @@ We had a great discussion and shared data visualization tools and techniques.
 
 Materials are available on **[my GitHub](https://github.com/nrindler/saigon-meetup)**, including a **[RPres slide deck](/post/meetup.html)** with links and resources for learning R and data visualization.
 
-![Presenting at Python Saigon](/img/saigon.jpg){width=600px}
+![Presenting at Python Saigon](/img/saigon.png){width=600px}

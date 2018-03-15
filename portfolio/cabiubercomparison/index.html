@@ -27,7 +27,7 @@
 
 
 <link href="/css/custom.css" rel="stylesheet">
-<link rel="shortcut icon" href="/img/favicon.png">
+<link rel="shortcut icon" href="/img/apple-touch-icon.png">
 
 
 </head>
@@ -58,10 +58,6 @@
   
   
   
-  
-  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
-    <i class="fa fa-envelope"></i>
-  </a>
   
   
   <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
@@ -183,7 +179,14 @@
 <div id="feature-selection" class="section level3">
 <h3>Feature Selection</h3>
 <p>I trained the model on all 2015 CaBi rides, and tested the model performance against all 2016 CaBi rides. I did feature selection by assessing each predictor’s p-value for statistical significance, evaluation of multicollinearity (particularly for the weather attributes), as well as observing overall model’s R-squared, mean absolute error (MAE), and mean absolute percentage error (MAPE) metrics on the test data set. Once I found a model variant that I felt was easily interpretable and had the best performance, I selected that regression model and assessed performance on the validation set (all Q1 2017 CaBi rides).</p>
-<p><img src="/img/cabi/cabi_reg_1.png" /> <img src="/img/cabi/cabi_reg_2.png" /></p>
+<div class="figure">
+<img src="/img/cabi/cabi_reg_1.png" width="552" />
+
+</div>
+<div class="figure">
+<img src="/img/cabi/cabi_reg_2.png" width="526" />
+
+</div>
 </div>
 <div id="model-performance" class="section level3">
 <h3>Model Performance</h3>

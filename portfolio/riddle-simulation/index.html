@@ -27,7 +27,7 @@
 
 
 <link href="/css/custom.css" rel="stylesheet">
-<link rel="shortcut icon" href="/img/favicon.png">
+<link rel="shortcut icon" href="/img/apple-touch-icon.png">
 
 
 </head>
@@ -58,10 +58,6 @@
   
   
   
-  
-  <a href="mailto:nrindler@gmail.com" data-animate-hover="pulse" class="email">
-    <i class="fa fa-envelope"></i>
-  </a>
   
   
   <a href="https://www.linkedin.com/in/nrindler/" data-animate-hover="pulse">
@@ -191,11 +187,11 @@ colnames(m) &lt;- c(&quot;iterations&quot;,&quot;pct_couch&quot;)
 head(m)</code></pre>
 <pre><code>##   iterations pct_couch
 ## 1         10 0.7000000
-## 2         20 0.8000000
-## 3         30 0.5666667
-## 4         40 0.3250000
-## 5         50 0.4200000
-## 6         60 0.2666667</code></pre>
+## 2         20 0.5500000
+## 3         30 0.4666667
+## 4         40 0.7000000
+## 5         50 0.7600000
+## 6         60 0.5833333</code></pre>
 <pre class="r"><code>#generate a chart to visualize the percentage of time at the couch
 ggplot(m,aes(x=iterations, y=pct_couch)) +
   geom_point() +

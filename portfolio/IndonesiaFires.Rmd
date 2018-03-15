@@ -80,7 +80,7 @@ Additionally, I utilized moving averages, simple exponential smoothing, and Four
 Stepwise linear regression found the daily fire count to be a key predictor of Singapore PSI, as well as the prior-day's fire count (See Fig. 8).  Week of year also has a large positive coefficient, meaning that as the week of the year increases so does Singapore PSI - this captures some of the seasonality given the higher PSI levels in Sept-Nov.  Other predictors include rain, temperature, wind speed and hours of sunshine. Wind speed and hours of sunshine have negative coefficients - stronger wind and more hours of sunlight are correlated with lower PSI.
 
 **Fig. 8**
-![](/img/DS350/stepwise_linreg_output.png)
+![](/img/DS350/stepwise_linreg_output.png){width=548px}
 
 .
 

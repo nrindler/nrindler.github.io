@@ -340,7 +340,6 @@ SIDEBAR + RIGHT COLUMN
 }
 .sidebar-heading {
   font-size: 18px;
-  text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 .sidebar-heading a {
